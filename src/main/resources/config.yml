@@ -114,7 +114,7 @@ attack:
         name: "Under Attack"
         # {0} shows you true or false whether the system detects an attack or not, based on
         #     your 'protection-threshold' option in Escanor-Proxy config.yml
-        # {1} shows you the current bot amount, connected to the fall-, captcha-check
+        # {1} shows you the current player amount, connected to the fall-/ captcha-check
         value: "> *{0}* ━ *{1}*"
       cpu:
         show: false
