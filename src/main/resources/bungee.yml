@@ -1,0 +1,5 @@
+name: EscanorBot
+version: 1.0.0
+author: NoJokeFNA
+
+main: eu.mcprotection.escanorbot.EscanorBotPlugin

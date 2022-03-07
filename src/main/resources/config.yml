@@ -1,0 +1,152 @@
+failed:
+  enable: false
+  url: "<insert-webhook-url-here>"
+  extra:
+    # After what time should the bot blocked-connection value be reset? (in seconds)
+    scheduler_delay: 5
+    # At which CPS value should the message not be sent?
+    cancel_cps: 35
+    # At which CPS value should the message not be sent?
+    # This value works together with the 'BLOCKED_CONNECTIONS' option.
+    # If the CPS value is LOWER than the value specified here and the 'BLOCKED_CONNECTIONS' value is lower
+    # than the value specified here, the message will not be sent.
+    # This can make you less likely to receive a rate-limit, so be careful with it!
+    cps: 10
+    # We increase the value +1 for the blocked connection on each message call, and when the specified
+    # value is reached, the message is not sent. (Please read the comment above for more information).
+    blocked_connections: 20
+  embed:
+    title: "Failed antibot check"
+    # Insert the url here or leave it blank if you don't want to display it
+    url: ""
+    # Format of color: 0xFF0000 - HTML code would be #FF0000, so you basically just have to change the '#' to '0x'
+    color: 0xFF0000
+    description: "A player was detected who failed an antibot check"
+    fields:
+      player_name:
+        show: true
+        inline: true
+        name: "Name"
+        # {0} is the player name that failed the check
+        value: "> *{0}*"
+      player_address:
+        show: true
+        inline: true
+        name: "Address"
+        # {0} is the player address that failed the check
+        # Important: If you enable 'hide-ips', in Escanor-Proxy config.yml, the ip will also be hidden!
+        value: "> *{0}*"
+      player_failed:
+        show: true
+        inline: true
+        name: "Failed"
+        # {0} is the check that the player failed
+        value: "> *{0}*"
+    # Should we show the timestamp of the message?
+    timestamp: true
+    footer:
+      text: ""
+      # Insert the url here or leave it blank if you don't want to display it
+      icon_url: ""
+attack:
+  enable: false
+  url: "<insert-webhook-url-here>"
+  extra:
+    # After what time should we check for a bot-attack? (in seconds)
+    scheduler_delay: 5
+    # Modes: 1, 2, 3
+    # 1: Check if the CPS value is reached, or not
+    # 2: Check if the automated 'attack-detected' feature is detecting the attack, or not
+    # 3: Check if the CPS value is reached and if the automated 'attack-detected'
+    #    feature is detecting the attack, or not
+    mode:
+      # What mode should we use to determine that the attack has been launched?
+      start: 1
+      # What mode should we use to determine that the attack has been stopped?
+      end: 1
+    # Set the CPS value according to the selected mode
+    # If you've set up a firewall you may not even be able to receive high CPS values, so setup it carefully.
+    cps:
+      start: 13
+      end: 2
+    # Should we show the total cps (connections-per-second), or only those that count as logins?
+    check_total_cps: true
+  embed:
+    title:
+      start: "Bot attack started"
+      end: "Bot attack ended"
+    # Insert the url here or leave it blank if you don't want to display it
+    url: ""
+    # Format of color: 0xFF0000 - HTML code would be #FF0000, so you basically just have to change the '#' to '0x'
+    color: 0xFF0000
+    description:
+      start: "The system has detected a bot attack"
+      end: "The bot attack has ended"
+    fields:
+      cps:
+        show: true
+        inline: true
+        name: "CPS"
+        # {0} is the highest CPS value achieved, based on your 'check_total_cps' option
+        # {1} is the current CPS amount, based on your 'check_total_cps' option
+        value: "> *{0}* (*{1}*)"
+      pps:
+        show: true
+        inline: true
+        name: "PPS"
+        # {0} is the current PPS amount
+        value: "> *{0}*"
+      blocked:
+        show: true
+        inline: true
+        name: "Total blocked"
+        # {0} is the current total-blocked amount
+        value: "> *{0}*"
+      blacklisted:
+        show: true
+        inline: true
+        name: "Blacklisted"
+        # {0} is the current blacklisted amount
+        value: "> *{0}*"
+      attack:
+        show: true
+        inline: true
+        name: "Under Attack"
+        # {0} shows you true or false whether the system detects an attack or not, based on
+        #     your 'protection-threshold' option in Escanor-Proxy config.yml
+        # {1} shows you the current bot amount, connected to the fall-, captcha-check
+        value: "> *{0}* ━ *{1}*"
+      cpu:
+        show: false
+        inline: true
+        name: "CPU"
+        # {0} is the current CPU usage
+        value: "> *{0}*"
+      ram:
+        show: false
+        inline: true
+        name: "RAM"
+        # {0} is the current RAM usage
+        value: "> *{0}*"
+    # Should we show the timestamp of the message?
+    timestamp: true
+    footer:
+      text: ""
+      # Insert the url here or leave it blank if you don't want to display it
+      icon_url: ""
+exception:
+  enable: false
+  url: "<insert-webhook-url-here>"
+  embed:
+    title: "Exception caught"
+    # Insert the url here or leave it blank if you don't want to display it
+    url: ""
+    # Format of color: 0xFF0000 - HTML code would be #FF0000, so you basically just have to change the '#' to '0x'
+    color: 0xFF0000
+    description: "An exception was caught{NL}{NL}**Plugin** - {0}{NL}**Stacktrace** - {1}"
+    # Should we show the timestamp of the message?
+    timestamp: true
+    footer:
+      text: ""
+      # Insert the url here or leave it blank if you don't want to display it
+      icon_url: ""
