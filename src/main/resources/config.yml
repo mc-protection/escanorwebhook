@@ -1,4 +1,7 @@
 failed:
+  # IMPORTANT
+  # You must enable the 'call-check-failed-event' in the EscanorProxy config.yml,
+  # otherwise this feature will not work because the event will not be executed!
   enable: false
   url: "<insert-webhook-url-here>"
   extra:
@@ -49,6 +52,9 @@ failed:
       # Insert the url here or leave it blank if you don't want to display it
       icon_url: ""
 attack:
+  # IMPORTANT
+  # You must enable the 'call-attack-detected-event' in the EscanorProxy config.yml,
+  # otherwise this feature will not work because the event will not be executed!
   enable: false
   url: "<insert-webhook-url-here>"
   extra:
