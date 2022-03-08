@@ -1,4 +1,7 @@
 failed:
+  # IMPORTANT
+  # You must enable the 'call-check-failed-event' in the EscanorProxy config.yml,
+  # otherwise this feature will not work because the event will not be executed!
   enable: false
   url: "<insert-webhook-url-here>"
   extra:
@@ -49,6 +52,9 @@ failed:
       # Insert the url here or leave it blank if you don't want to display it
       icon_url: ""
 attack:
+  # IMPORTANT
+  # You must enable the 'call-attack-detected-event' in the EscanorProxy config.yml,
+  # otherwise this feature will not work because the event will not be executed!
   enable: false
   url: "<insert-webhook-url-here>"
   extra:
@@ -114,7 +120,7 @@ attack:
         name: "Under Attack"
         # {0} shows you true or false whether the system detects an attack or not, based on
         #     your 'protection-threshold' option in Escanor-Proxy config.yml
-        # {1} shows you the current bot amount, connected to the fall-, captcha-check
+        # {1} shows you the current player amount, connected to the fall-/ captcha-check
         value: "> *{0}* ━ *{1}*"
       cpu:
         show: false
