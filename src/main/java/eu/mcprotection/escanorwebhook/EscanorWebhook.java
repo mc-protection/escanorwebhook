@@ -1,12 +1,12 @@
-package eu.mcprotection.escanorbot;
+package eu.mcprotection.escanorwebhook;
 
 import com.google.common.io.ByteStreams;
-import eu.mcprotection.escanorbot.discord.AttackWebhook;
-import eu.mcprotection.escanorbot.discord.ExceptionWebhook;
-import eu.mcprotection.escanorbot.discord.FailedWebhook;
-import eu.mcprotection.escanorbot.listener.CheckFailedListener;
-import eu.mcprotection.escanorbot.listener.ProxyExceptionListener;
-import eu.mcprotection.escanorbot.utils.ConfigUtil;
+import eu.mcprotection.escanorwebhook.discord.AttackWebhook;
+import eu.mcprotection.escanorwebhook.discord.ExceptionWebhook;
+import eu.mcprotection.escanorwebhook.discord.FailedWebhook;
+import eu.mcprotection.escanorwebhook.listener.CheckFailedListener;
+import eu.mcprotection.escanorwebhook.listener.ProxyExceptionListener;
+import eu.mcprotection.escanorwebhook.utils.ConfigUtil;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.PluginManager;
@@ -25,11 +25,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public enum EscanorBot {
+public enum EscanorWebhook {
   PLUGIN;
 
   @Getter
-  private EscanorBotPlugin plugin;
+  private EscanorWebhookPlugin plugin;
 
   @Getter
   private Configuration configuration;
@@ -54,9 +54,9 @@ public enum EscanorBot {
   /**
    * Set the plugin instance.
    *
-   * @param plugin the plugin - {@link EscanorBotPlugin} - instance
+   * @param plugin the plugin - {@link EscanorWebhookPlugin} - instance
    */
-  public void load(@NotNull final EscanorBotPlugin plugin) {
+  public void load(@NotNull final EscanorWebhookPlugin plugin) {
     this.plugin = plugin;
   }
 
@@ -65,14 +65,14 @@ public enum EscanorBot {
    */
   public void start() {
     this.init();
-    this.proxyServer.getLogger().info("EscanorBot plugin has been started!");
+    this.proxyServer.getLogger().info("EscanorWebhook plugin has been started!");
   }
 
   /**
    * Send a message to the console when the plugin is stopped.
    */
   public void stop() {
-    this.proxyServer.getLogger().info("EscanorBot plugin has been stopped!");
+    this.proxyServer.getLogger().info("EscanorWebhook plugin has been stopped!");
   }
 
   /**
@@ -82,7 +82,7 @@ public enum EscanorBot {
     try {
       this.configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(this.loadResource("config.yml"));
     } catch (IOException exception) {
-      System.out.println("[EscanorBot]: Could not load configuration file!");
+      System.out.println("[EscanorWebhook]: Could not load configuration file!");
       throw new RuntimeException(exception);
     }
     this.statistics = new EscanorProxyStatistics();

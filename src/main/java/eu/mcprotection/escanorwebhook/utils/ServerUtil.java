@@ -1,4 +1,4 @@
-package eu.mcprotection.escanorbot.utils;
+package eu.mcprotection.escanorwebhook.utils;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;

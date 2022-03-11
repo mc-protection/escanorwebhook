@@ -1,13 +1,13 @@
-package eu.mcprotection.escanorbot.discord;
+package eu.mcprotection.escanorwebhook.discord;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.exception.HttpException;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import eu.mcprotection.escanorbot.EscanorBot;
-import eu.mcprotection.escanorbot.utils.ConfigUtil;
-import eu.mcprotection.escanorbot.utils.ServerUtil;
+import eu.mcprotection.escanorwebhook.EscanorWebhook;
+import eu.mcprotection.escanorwebhook.utils.ConfigUtil;
+import eu.mcprotection.escanorwebhook.utils.ServerUtil;
 import org.jetbrains.annotations.NotNull;
 import xyz.yooniks.escanorproxy.EscanorProxyStatistics;
 import xyz.yooniks.escanorproxy.EscanorUtil;
@@ -24,7 +24,7 @@ public class AttackWebhook {
   private WebhookClient client;
 
   public AttackWebhook() {
-    this.statistics = EscanorBot.PLUGIN.getStatistics();
+    this.statistics = EscanorWebhook.PLUGIN.getStatistics();
     this.underAttack = false;
     this.messageId = -1;
     this.beforeCps = 0;
@@ -41,11 +41,11 @@ public class AttackWebhook {
     builder.setWait(true);
 
     this.client = builder.build();
-    EscanorBot.PLUGIN.getPlugin().getLogger().info("Connected to attack webhook");
+    EscanorWebhook.PLUGIN.getPlugin().getLogger().info("Connected to attack webhook");
   }
 
   public void send() {
-    EscanorBot.PLUGIN.getScheduledService().scheduleAtFixedRate(() -> {
+    EscanorWebhook.PLUGIN.getScheduledService().scheduleAtFixedRate(() -> {
       if (!this.underAttack) {
         if (this.attackDetected(true)) {
           this.underAttack = true;
@@ -160,7 +160,7 @@ public class AttackWebhook {
         try {
           this.client.send(builder.build()).thenAccept(readonlyMessage -> this.messageId = readonlyMessage.getId());
         } catch (HttpException exception) {
-          EscanorBot.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
+          EscanorWebhook.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
         }
         break;
 
@@ -168,7 +168,7 @@ public class AttackWebhook {
         try {
           this.client.send(builder.build()).thenRun(() -> this.messageId = -1L);
         } catch (HttpException exception) {
-          EscanorBot.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
+          EscanorWebhook.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
         }
         break;
 
@@ -176,7 +176,7 @@ public class AttackWebhook {
         try {
           this.client.edit(this.messageId, builder.build());
         } catch (HttpException exception) {
-          EscanorBot.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
+          EscanorWebhook.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
         }
         break;
     }
