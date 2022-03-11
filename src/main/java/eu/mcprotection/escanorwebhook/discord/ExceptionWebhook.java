@@ -1,12 +1,12 @@
-package eu.mcprotection.escanorbot.discord;
+package eu.mcprotection.escanorwebhook.discord;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.exception.HttpException;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import eu.mcprotection.escanorbot.EscanorBot;
-import eu.mcprotection.escanorbot.utils.ConfigUtil;
+import eu.mcprotection.escanorwebhook.EscanorWebhook;
+import eu.mcprotection.escanorwebhook.utils.ConfigUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -25,11 +25,11 @@ public class ExceptionWebhook {
     builder.setWait(true);
 
     this.client = builder.build();
-    EscanorBot.PLUGIN.getPlugin().getLogger().info("Connected to exception webhook");
+    EscanorWebhook.PLUGIN.getPlugin().getLogger().info("Connected to exception webhook");
   }
 
   public void send(@NotNull final String plugin, @NotNull final String stacktrace) {
-    EscanorBot.PLUGIN.getService().submit(() -> {
+    EscanorWebhook.PLUGIN.getService().submit(() -> {
       final WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
       builder.setTitle(new WebhookEmbed.EmbedTitle(ConfigUtil.getString("exception.embed.title"), ConfigUtil.getString("exception.embed.url")));
       builder.setColor(ConfigUtil.getInteger("exception.embed.color"));
@@ -46,7 +46,7 @@ public class ExceptionWebhook {
       try {
         this.client.send(builder.build());
       } catch (HttpException exception) {
-        EscanorBot.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
+        EscanorWebhook.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
       }
     });
   }

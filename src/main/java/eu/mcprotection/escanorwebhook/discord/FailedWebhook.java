@@ -1,12 +1,12 @@
-package eu.mcprotection.escanorbot.discord;
+package eu.mcprotection.escanorwebhook.discord;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.exception.HttpException;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import eu.mcprotection.escanorbot.EscanorBot;
-import eu.mcprotection.escanorbot.utils.ConfigUtil;
+import eu.mcprotection.escanorwebhook.EscanorWebhook;
+import eu.mcprotection.escanorwebhook.utils.ConfigUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -27,7 +27,7 @@ public class FailedWebhook {
     builder.setWait(true);
 
     this.client = builder.build();
-    EscanorBot.PLUGIN.getPlugin().getLogger().info("Connected to failed webhook");
+    EscanorWebhook.PLUGIN.getPlugin().getLogger().info("Connected to failed webhook");
   }
 
   public void send(@NotNull final String playerName, @NotNull final String hostAddress, @NotNull final String failed, final int cps) {
@@ -42,7 +42,7 @@ public class FailedWebhook {
       return;
     }
 
-    EscanorBot.PLUGIN.getService().submit(() -> {
+    EscanorWebhook.PLUGIN.getService().submit(() -> {
       final WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
       builder.setTitle(new WebhookEmbed.EmbedTitle(ConfigUtil.getString("failed.embed.title"), ConfigUtil.getString("failed.embed.url")));
       builder.setColor(ConfigUtil.getInteger("failed.embed.color"));
@@ -80,11 +80,11 @@ public class FailedWebhook {
       try {
         this.client.send(builder.build());
       } catch (HttpException exception) {
-        EscanorBot.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
+        EscanorWebhook.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
       }
     });
 
-    EscanorBot.PLUGIN.getScheduledService().scheduleAtFixedRate(() -> {
+    EscanorWebhook.PLUGIN.getScheduledService().scheduleAtFixedRate(() -> {
       this.blockedConnections = 0;
     }, ConfigUtil.getInteger("failed.extra.scheduler_delay"), ConfigUtil.getInteger("failed.extra.scheduler_delay"), TimeUnit.SECONDS);
   }

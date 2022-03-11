@@ -1,21 +1,21 @@
-package eu.mcprotection.escanorbot.utils;
+package eu.mcprotection.escanorwebhook.utils;
 
-import eu.mcprotection.escanorbot.EscanorBot;
+import eu.mcprotection.escanorwebhook.EscanorWebhook;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 @UtilityClass
 public class ConfigUtil {
   public static String getString(@NotNull final String path) {
-    return EscanorBot.PLUGIN.getConfiguration().getString(path);
+    return EscanorWebhook.PLUGIN.getConfiguration().getString(path);
   }
 
   public static int getInteger(@NotNull final String path) {
-    return EscanorBot.PLUGIN.getConfiguration().getInt(path);
+    return EscanorWebhook.PLUGIN.getConfiguration().getInt(path);
   }
 
   public static boolean getBoolean(@NotNull final String path) {
-    return EscanorBot.PLUGIN.getConfiguration().getBoolean(path);
+    return EscanorWebhook.PLUGIN.getConfiguration().getBoolean(path);
   }
 
   public static boolean isShow(@NotNull final String path, @NotNull final String fieldName) {

@@ -1,5 +1,5 @@
-name: EscanorBot
+name: EscanorWebhook
 version: 1.0.0
 author: NoJokeFNA
 
-main: eu.mcprotection.escanorbot.EscanorBotPlugin
+main: eu.mcprotection.escanorwebhook.EscanorWebhookPlugin
