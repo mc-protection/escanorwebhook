@@ -13,16 +13,25 @@ import eu.mcprotection.escanorwebhook.repository.ResourceRepository;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
+import org.jetbrains.annotations.NotNull;
 
 @Singleton
 public final class WebhookInitializer {
-  @Inject private Injector injector;
-  @Inject private Plugin plugin;
-  @Inject private ResourceLoader resourceLoader;
-  @Inject private ResourceRepository resourceRepository;
-  @Inject private AttackWebhook attackWebhook;
-  @Inject private ExceptionWebhook exceptionWebhook;
-  @Inject private FailedWebhook failedWebhook;
+
+  @Inject
+  private Injector injector;
+  @Inject
+  private Plugin plugin;
+  @Inject
+  private ResourceLoader resourceLoader;
+  @Inject
+  private ResourceRepository resourceRepository;
+  @Inject
+  private AttackWebhook attackWebhook;
+  @Inject
+  private ExceptionWebhook exceptionWebhook;
+  @Inject
+  private FailedWebhook failedWebhook;
 
   public void initialize() {
     // Load Resources
@@ -53,12 +62,16 @@ public final class WebhookInitializer {
   private void registerListener() {
     final PluginManager pluginManager = this.plugin.getProxy().getPluginManager();
     if (this.getConfig().getBoolean("failed.enable")) {
-      pluginManager.registerListener(this.plugin, injector.getInstance(CheckFailedListener.class));
+      pluginManager.registerListener(this.plugin, this.getInstance(CheckFailedListener.class));
     }
 
     if (this.getConfig().getBoolean("exception.enable")) {
-      pluginManager.registerListener(this.plugin, injector.getInstance(ProxyExceptionListener.class));
+      pluginManager.registerListener(this.plugin, this.getInstance(ProxyExceptionListener.class));
     }
+  }
+
+  private <T> T getInstance(@NotNull final Class<T> clazz) {
+    return this.injector.getInstance(clazz);
   }
 
   private Configuration getConfig() {

@@ -6,6 +6,7 @@ import eu.mcprotection.escanorwebhook.repository.ResourceRepository;
 import net.md_5.bungee.config.Configuration;
 
 public abstract class Webhook {
+
   protected WebhookClient client;
   protected ResourceRepository resourceRepository;
 
@@ -14,7 +15,8 @@ public abstract class Webhook {
   }
 
   public void connect(String webhookUrlPath, String threadName) {
-    final WebhookClientBuilder builder = new WebhookClientBuilder(this.getConfig().getString(webhookUrlPath));
+    final WebhookClientBuilder builder = new WebhookClientBuilder(
+        this.getConfig().getString(webhookUrlPath));
     builder.setThreadFactory(
         job -> {
           final Thread thread = new Thread(job);

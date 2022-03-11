@@ -6,11 +6,10 @@ import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.mcprotection.escanorwebhook.repository.ResourceRepository;
-import net.md_5.bungee.api.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Instant;
 import java.util.concurrent.ExecutorService;
+import net.md_5.bungee.api.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 @Singleton
 public class ExceptionWebhook extends Webhook {

@@ -7,19 +7,18 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.mcprotection.escanorwebhook.repository.ResourceRepository;
 import eu.mcprotection.escanorwebhook.util.ConfigUtil;
-import lombok.Getter;
-import net.md_5.bungee.api.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import xyz.yooniks.escanorproxy.EscanorUtil;
-
 import java.time.Instant;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import lombok.Getter;
+import net.md_5.bungee.api.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 @Singleton
 @Getter
 public final class FailedWebhook extends Webhook {
+
   @Inject private Plugin plugin;
   @Inject private ExecutorService service;
   @Inject private ScheduledExecutorService scheduledService;
@@ -106,12 +105,11 @@ public final class FailedWebhook extends Webhook {
       }
     });
 
-    this.getScheduledService()
-        .scheduleAtFixedRate(() -> {
-              this.blockedConnections = 0;
-            },
-            this.getConfig().getInt("failed.extra.scheduler_delay"),
-            this.getConfig().getInt("failed.extra.scheduler_delay"),
-            TimeUnit.SECONDS);
+    this.getScheduledService().scheduleAtFixedRate(() -> {
+          this.blockedConnections = 0;
+        },
+        this.getConfig().getInt("failed.extra.scheduler_delay"),
+        this.getConfig().getInt("failed.extra.scheduler_delay"),
+        TimeUnit.SECONDS);
   }
 }

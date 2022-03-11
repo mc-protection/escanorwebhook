@@ -8,17 +8,17 @@ import com.google.inject.Singleton;
 import eu.mcprotection.escanorwebhook.repository.ResourceRepository;
 import eu.mcprotection.escanorwebhook.util.ConfigUtil;
 import eu.mcprotection.escanorwebhook.util.ServerResourcesUtils;
+import java.time.Instant;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import xyz.yooniks.escanorproxy.EscanorProxyStatistics;
 import xyz.yooniks.escanorproxy.EscanorUtil;
 
-import java.time.Instant;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 @Singleton
 public class AttackWebhook extends Webhook {
+
   @Inject private Plugin plugin;
   @Inject private EscanorProxyStatistics statistics;
   @Inject private ScheduledExecutorService scheduledService;
@@ -38,8 +38,7 @@ public class AttackWebhook extends Webhook {
   }
 
   public void send() {
-    this.scheduledService.scheduleAtFixedRate(
-        () -> {
+    this.scheduledService.scheduleAtFixedRate(() -> {
           if (!this.underAttack) {
             if (this.attackDetected(true)) {
               this.underAttack = true;
@@ -82,7 +81,7 @@ public class AttackWebhook extends Webhook {
       case 3:
         return start
             ? this.getCps() >= this.getConfig().getInt("attack.extra.cps.start")
-                && EscanorUtil.underAttack
+            && EscanorUtil.underAttack
             : this.getCps() <= this.getConfig().getInt("attack.extra.cps.end")
                 && !EscanorUtil.underAttack;
       default:
@@ -92,12 +91,11 @@ public class AttackWebhook extends Webhook {
 
   private void sendByType(@NotNull final SendType type) {
     final WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
-    builder.setTitle(
-        new WebhookEmbed.EmbedTitle(
-            this.underAttack
-                ? this.getConfig().getString("attack.embed.title.start")
-                : this.getConfig().getString("attack.embed.title.end"),
-            this.getConfig().getString("attack.embed.url")));
+    builder.setTitle(new WebhookEmbed.EmbedTitle(
+        this.underAttack
+            ? this.getConfig().getString("attack.embed.title.start")
+            : this.getConfig().getString("attack.embed.title.end"),
+        this.getConfig().getString("attack.embed.url")));
     builder.setColor(this.getConfig().getInt("attack.embed.color"));
     builder.setDescription(
         this.underAttack

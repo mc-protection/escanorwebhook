@@ -4,15 +4,15 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import net.md_5.bungee.api.plugin.Plugin;
-import xyz.yooniks.escanorproxy.EscanorProxyStatistics;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import net.md_5.bungee.api.plugin.Plugin;
+import xyz.yooniks.escanorproxy.EscanorProxyStatistics;
 
 @Singleton
 public class EscanorWebhookPlugin extends Plugin {
+
   @Override
   public void onEnable() {
     final Injector injector = Guice.createInjector(
