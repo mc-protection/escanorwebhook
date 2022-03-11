@@ -1,91 +1,115 @@
 package eu.mcprotection.escanorwebhook.discord;
 
-import club.minnced.discord.webhook.WebhookClient;
-import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.exception.HttpException;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import eu.mcprotection.escanorwebhook.EscanorWebhook;
-import eu.mcprotection.escanorwebhook.utils.ConfigUtil;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import eu.mcprotection.escanorwebhook.repository.ResourceRepository;
+import eu.mcprotection.escanorwebhook.util.ConfigUtil;
+import java.time.Instant;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import lombok.Getter;
+import net.md_5.bungee.api.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Instant;
-import java.util.concurrent.TimeUnit;
+@Singleton
+@Getter
+public final class FailedWebhook extends Webhook {
 
-public class FailedWebhook {
-  private WebhookClient client;
+  @Inject private Plugin plugin;
+  @Inject private ExecutorService service;
+  @Inject private ScheduledExecutorService scheduledService;
+
   private int blockedConnections;
 
-  public void connect() {
-    final WebhookClientBuilder builder = new WebhookClientBuilder(ConfigUtil.getString("failed.url"));
-    builder.setThreadFactory(job -> {
-      final Thread thread = new Thread(job);
-      thread.setName("Failed-Webhook-Thread");
-      thread.setDaemon(true);
-      return thread;
-    });
-    builder.setWait(true);
-
-    this.client = builder.build();
-    EscanorWebhook.PLUGIN.getPlugin().getLogger().info("Connected to failed webhook");
+  @Inject
+  private FailedWebhook(ResourceRepository resourceRepository) {
+    super(resourceRepository);
   }
 
-  public void send(@NotNull final String playerName, @NotNull final String hostAddress, @NotNull final String failed, final int cps) {
-    if (cps >= ConfigUtil.getInteger("failed.extra.cancel_cps")) {
+  public void connect() {
+    super.connect("failed.url", "Failed-Webhook-Thread");
+    this.plugin.getLogger().info("Connected to failed webhook");
+  }
+
+  public void send(
+      @NotNull final String playerName,
+      @NotNull final String hostAddress,
+      @NotNull final String failed,
+      final int cps) {
+    if (cps >= this.getConfig().getInt("failed.extra.cancel_cps")) {
       System.out.println("Cancelling failed webhook due to high CPS");
       return;
     }
 
     this.blockedConnections++;
-    if (cps > ConfigUtil.getInteger("failed.extra.cancel_cps") && this.blockedConnections > ConfigUtil.getInteger("failed.extra.blocked_connections")) {
+    if (cps > this.getConfig().getInt("failed.extra.cancel_cps")
+        && this.blockedConnections > this.getConfig().getInt("failed.extra.blocked_connections")) {
       System.out.println("Skipping failed webhook due to blocked connections");
       return;
     }
 
-    EscanorWebhook.PLUGIN.getService().submit(() -> {
+    this.getService().submit(() -> {
       final WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
-      builder.setTitle(new WebhookEmbed.EmbedTitle(ConfigUtil.getString("failed.embed.title"), ConfigUtil.getString("failed.embed.url")));
-      builder.setColor(ConfigUtil.getInteger("failed.embed.color"));
-      builder.setDescription(ConfigUtil.getString("failed.embed.description"));
+      builder.setTitle(
+          new WebhookEmbed.EmbedTitle(
+              this.getConfig().getString("failed.embed.title"),
+              this.getConfig().getString("failed.embed.url")));
+      builder.setColor(this.getConfig().getInt("failed.embed.color"));
+      builder.setDescription(this.getConfig().getString("failed.embed.description"));
 
-      if (ConfigUtil.isShow("failed", "player_name")) {
-        builder.addField(new WebhookEmbed.EmbedField(
-            ConfigUtil.isInline("failed", "player_name"),
-            ConfigUtil.getName("failed", "player_name"),
-            ConfigUtil.getValue("failed", "player_name").replace("{0}", playerName)
-        ));
+      if (ConfigUtil.isShow(this.getConfig(), "failed", "player_name")) {
+        builder.addField(
+            new WebhookEmbed.EmbedField(
+                ConfigUtil.isInline(this.getConfig(), "failed", "player_name"),
+                ConfigUtil.getName(this.getConfig(), "failed", "player_name"),
+                ConfigUtil.getValue(this.getConfig(), "failed", "player_name")
+                    .replace("{0}", playerName)));
       }
 
-      if (ConfigUtil.isShow("failed", "player_address")) {
-        builder.addField(new WebhookEmbed.EmbedField(
-            ConfigUtil.isInline("failed", "player_address"),
-            ConfigUtil.getName("failed", "player_address"),
-            ConfigUtil.getValue("failed", "player_address").replace("{0}", hostAddress)
-        ));
+      if (ConfigUtil.isShow(this.getConfig(), "failed", "player_address")) {
+        builder.addField(
+            new WebhookEmbed.EmbedField(
+                ConfigUtil.isInline(this.getConfig(), "failed", "player_address"),
+                ConfigUtil.getName(this.getConfig(), "failed", "player_address"),
+                ConfigUtil.getValue(this.getConfig(), "failed", "player_address")
+                    .replace("{0}", hostAddress)));
       }
 
-      if (ConfigUtil.isShow("failed", "player_failed")) {
-        builder.addField(new WebhookEmbed.EmbedField(
-            ConfigUtil.isInline("failed", "player_failed"),
-            ConfigUtil.getName("failed", "player_failed"),
-            ConfigUtil.getValue("failed", "player_failed").replace("{0}", failed)
-        ));
+      if (ConfigUtil.isShow(this.getConfig(), "failed", "player_failed")) {
+        builder.addField(
+            new WebhookEmbed.EmbedField(
+                ConfigUtil.isInline(this.getConfig(), "failed", "player_failed"),
+                ConfigUtil.getName(this.getConfig(), "failed", "player_failed"),
+                ConfigUtil.getValue(this.getConfig(), "failed", "player_failed")
+                    .replace("{0}", failed)));
       }
-      if (ConfigUtil.getBoolean("failed.embed.timestamp")) {
+      if (this.getConfig().getBoolean("failed.embed.timestamp")) {
         builder.setTimestamp(Instant.ofEpochMilli(System.currentTimeMillis()));
       }
 
-      builder.setFooter(new WebhookEmbed.EmbedFooter(ConfigUtil.getString("failed.embed.footer.text"), ConfigUtil.getString("failed.embed.footer.icon_url")));
+      builder.setFooter(
+          new WebhookEmbed.EmbedFooter(
+              this.getConfig().getString("failed.embed.footer.text"),
+              this.getConfig().getString("failed.embed.footer.icon_url")));
 
       try {
         this.client.send(builder.build());
       } catch (HttpException exception) {
-        EscanorWebhook.PLUGIN.getProxyServer().getLogger().warning("Failed to send webhook: " + exception.getMessage());
+        this.plugin
+            .getLogger()
+            .warning("Failed to send webhook: " + exception.getMessage());
       }
     });
 
-    EscanorWebhook.PLUGIN.getScheduledService().scheduleAtFixedRate(() -> {
-      this.blockedConnections = 0;
-    }, ConfigUtil.getInteger("failed.extra.scheduler_delay"), ConfigUtil.getInteger("failed.extra.scheduler_delay"), TimeUnit.SECONDS);
+    this.getScheduledService().scheduleAtFixedRate(() -> {
+          this.blockedConnections = 0;
+        },
+        this.getConfig().getInt("failed.extra.scheduler_delay"),
+        this.getConfig().getInt("failed.extra.scheduler_delay"),
+        TimeUnit.SECONDS);
   }
 }

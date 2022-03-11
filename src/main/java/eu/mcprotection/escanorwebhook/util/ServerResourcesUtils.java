@@ -1,8 +1,6 @@
-package eu.mcprotection.escanorwebhook.utils;
+package eu.mcprotection.escanorwebhook.util;
 
-import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
-
+import java.lang.management.ManagementFactory;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
@@ -10,15 +8,22 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-import java.lang.management.ManagementFactory;
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class ServerUtil {
-  @SneakyThrows({MalformedObjectNameException.class, ReflectionException.class, InstanceNotFoundException.class})
+public class ServerResourcesUtils {
+
+  @SneakyThrows({
+      MalformedObjectNameException.class,
+      ReflectionException.class,
+      InstanceNotFoundException.class
+  })
   public static double getProcessCpuLoad() {
     final MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     final ObjectName objectName = ObjectName.getInstance("java.lang:type=OperatingSystem");
-    final AttributeList attributeList = platformMBeanServer.getAttributes(objectName, new String[]{"ProcessCpuLoad"});
+    final AttributeList attributeList =
+        platformMBeanServer.getAttributes(objectName, new String[]{"ProcessCpuLoad"});
     if (attributeList.isEmpty()) {
       return Double.NaN;
     }
