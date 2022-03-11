@@ -10,7 +10,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 @Singleton
 public class ProxyExceptionListener implements Listener {
-
   @Inject private ExceptionWebhook exceptionWebhook;
 
   @EventHandler

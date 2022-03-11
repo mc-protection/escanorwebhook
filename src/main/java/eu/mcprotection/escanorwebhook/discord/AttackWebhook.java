@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class AttackWebhook extends Webhook {
-
   @Inject private Plugin plugin;
   @Inject private EscanorProxyStatistics statistics;
   @Inject private ScheduledExecutorService scheduledService;
@@ -63,28 +62,28 @@ public class AttackWebhook extends Webhook {
             this.sendByType(SendType.EDIT);
           }
         },
-        this.config.getInt("attack.extra.scheduler_delay"),
-        this.config.getInt("attack.extra.scheduler_delay"),
+        this.getConfig().getInt("attack.extra.scheduler_delay"),
+        this.getConfig().getInt("attack.extra.scheduler_delay"),
         TimeUnit.SECONDS);
   }
 
   private boolean attackDetected(final boolean start) {
     final int mode =
         start
-            ? this.config.getInt("attack.extra.mode.start")
-            : this.config.getInt("attack.extra.mode.end");
+            ? this.getConfig().getInt("attack.extra.mode.start")
+            : this.getConfig().getInt("attack.extra.mode.end");
     switch (mode) {
       case 1:
         return start
-            ? this.getCps() >= this.config.getInt("attack.extra.cps.start")
-            : this.getCps() <= this.config.getInt("attack.extra.cps.end");
+            ? this.getCps() >= this.getConfig().getInt("attack.extra.cps.start")
+            : this.getCps() <= this.getConfig().getInt("attack.extra.cps.end");
       case 2:
         return start == EscanorUtil.underAttack;
       case 3:
         return start
-            ? this.getCps() >= this.config.getInt("attack.extra.cps.start")
+            ? this.getCps() >= this.getConfig().getInt("attack.extra.cps.start")
                 && EscanorUtil.underAttack
-            : this.getCps() <= this.config.getInt("attack.extra.cps.end")
+            : this.getCps() <= this.getConfig().getInt("attack.extra.cps.end")
                 && !EscanorUtil.underAttack;
       default:
         throw new IllegalStateException("Unknown attack mode: " + mode);
@@ -96,85 +95,85 @@ public class AttackWebhook extends Webhook {
     builder.setTitle(
         new WebhookEmbed.EmbedTitle(
             this.underAttack
-                ? this.config.getString("attack.embed.title.start")
-                : this.config.getString("attack.embed.title.end"),
-            this.config.getString("attack.embed.url")));
-    builder.setColor(this.config.getInt("attack.embed.color"));
+                ? this.getConfig().getString("attack.embed.title.start")
+                : this.getConfig().getString("attack.embed.title.end"),
+            this.getConfig().getString("attack.embed.url")));
+    builder.setColor(this.getConfig().getInt("attack.embed.color"));
     builder.setDescription(
         this.underAttack
-            ? this.config.getString("attack.embed.description.start")
-            : this.config.getString("attack.embed.description.end"));
-    if (ConfigUtil.isShow(this.config, "attack", "cps")) {
+            ? this.getConfig().getString("attack.embed.description.start")
+            : this.getConfig().getString("attack.embed.description.end"));
+    if (ConfigUtil.isShow(this.getConfig(), "attack", "cps")) {
       builder.addField(
           new WebhookEmbed.EmbedField(
-              ConfigUtil.isInline(this.config, "attack", "cps"),
-              ConfigUtil.getName(this.config, "attack", "cps"),
-              ConfigUtil.getValue(this.config, "attack", "cps")
+              ConfigUtil.isInline(this.getConfig(), "attack", "cps"),
+              ConfigUtil.getName(this.getConfig(), "attack", "cps"),
+              ConfigUtil.getValue(this.getConfig(), "attack", "cps")
                   .replace("{0}", String.valueOf(this.getHighestCps()))
                   .replace("{1}", String.valueOf(this.getCps()))));
     }
 
-    if (ConfigUtil.isShow(this.config, "attack", "pps")) {
+    if (ConfigUtil.isShow(this.getConfig(), "attack", "pps")) {
       builder.addField(
           new WebhookEmbed.EmbedField(
-              ConfigUtil.isInline(this.config, "attack", "pps"),
-              ConfigUtil.getName(this.config, "attack", "pps"),
-              ConfigUtil.getValue(this.config, "attack", "pps")
+              ConfigUtil.isInline(this.getConfig(), "attack", "pps"),
+              ConfigUtil.getName(this.getConfig(), "attack", "pps"),
+              ConfigUtil.getValue(this.getConfig(), "attack", "pps")
                   .replace("{0}", String.valueOf(this.statistics.getPingsPerSecond()))));
     }
 
-    if (ConfigUtil.isShow(this.config, "attack", "blocked")) {
+    if (ConfigUtil.isShow(this.getConfig(), "attack", "blocked")) {
       builder.addField(
           new WebhookEmbed.EmbedField(
-              ConfigUtil.isInline(this.config, "attack", "blocked"),
-              ConfigUtil.getName(this.config, "attack", "blocked"),
-              ConfigUtil.getValue(this.config, "attack", "blocked")
+              ConfigUtil.isInline(this.getConfig(), "attack", "blocked"),
+              ConfigUtil.getName(this.getConfig(), "attack", "blocked"),
+              ConfigUtil.getValue(this.getConfig(), "attack", "blocked")
                   .replace("{0}", String.valueOf(this.statistics.getBlockedConnections()))));
     }
 
-    if (ConfigUtil.isShow(this.config, "attack", "blacklisted")) {
+    if (ConfigUtil.isShow(this.getConfig(), "attack", "blacklisted")) {
       builder.addField(
           new WebhookEmbed.EmbedField(
-              ConfigUtil.isInline(this.config, "attack", "blacklisted"),
-              ConfigUtil.getName(this.config, "attack", "blacklisted"),
-              ConfigUtil.getValue(this.config, "attack", "blacklisted")
+              ConfigUtil.isInline(this.getConfig(), "attack", "blacklisted"),
+              ConfigUtil.getName(this.getConfig(), "attack", "blacklisted"),
+              ConfigUtil.getValue(this.getConfig(), "attack", "blacklisted")
                   .replace("{0}", String.valueOf(this.statistics.getBlacklistedConnections()))));
     }
 
-    if (ConfigUtil.isShow(this.config, "attack", "attack")) {
+    if (ConfigUtil.isShow(this.getConfig(), "attack", "attack")) {
       builder.addField(
           new WebhookEmbed.EmbedField(
-              ConfigUtil.isInline(this.config, "attack", "attack"),
-              ConfigUtil.getName(this.config, "attack", "attack"),
-              ConfigUtil.getValue(this.config, "attack", "attack")
+              ConfigUtil.isInline(this.getConfig(), "attack", "attack"),
+              ConfigUtil.getName(this.getConfig(), "attack", "attack"),
+              ConfigUtil.getValue(this.getConfig(), "attack", "attack")
                   .replace("{0}", String.valueOf(EscanorUtil.underAttack))
                   .replace("{1}", String.valueOf(EscanorUtil.botCounter))));
     }
 
-    if (ConfigUtil.isShow(this.config, "attack", "cpu")) {
+    if (ConfigUtil.isShow(this.getConfig(), "attack", "cpu")) {
       builder.addField(
           new WebhookEmbed.EmbedField(
-              ConfigUtil.isInline(this.config, "attack", "cpu"),
-              ConfigUtil.getName(this.config, "attack", "cpu"),
-              ConfigUtil.getValue(this.config, "attack", "cpu")
+              ConfigUtil.isInline(this.getConfig(), "attack", "cpu"),
+              ConfigUtil.getName(this.getConfig(), "attack", "cpu"),
+              ConfigUtil.getValue(this.getConfig(), "attack", "cpu")
                   .replace("{0}", String.valueOf(ServerResourcesUtils.getProcessCpuLoad()))));
     }
 
-    if (ConfigUtil.isShow(this.config, "attack", "ram")) {
+    if (ConfigUtil.isShow(this.getConfig(), "attack", "ram")) {
       builder.addField(
           new WebhookEmbed.EmbedField(
-              ConfigUtil.isInline(this.config, "attack", "ram"),
-              ConfigUtil.getName(this.config, "attack", "ram"),
-              ConfigUtil.getValue(this.config, "attack", "ram")
+              ConfigUtil.isInline(this.getConfig(), "attack", "ram"),
+              ConfigUtil.getName(this.getConfig(), "attack", "ram"),
+              ConfigUtil.getValue(this.getConfig(), "attack", "ram")
                   .replace("{0}", String.valueOf(ServerResourcesUtils.getMemory()))));
     }
-    if (this.config.getBoolean("attack.embed.timestamp")) {
+    if (this.getConfig().getBoolean("attack.embed.timestamp")) {
       builder.setTimestamp(Instant.ofEpochMilli(System.currentTimeMillis()));
     }
     builder.setFooter(
         new WebhookEmbed.EmbedFooter(
-            this.config.getString("attack.embed.footer.text"),
-            this.config.getString("attack.embed.footer.icon_url")));
+            this.getConfig().getString("attack.embed.footer.text"),
+            this.getConfig().getString("attack.embed.footer.icon_url")));
 
     switch (type) {
       case SEND:
@@ -214,7 +213,7 @@ public class AttackWebhook extends Webhook {
   }
 
   private int getCps() {
-    if (this.config.getBoolean("attack.extra.check_total_cps")) {
+    if (this.getConfig().getBoolean("attack.extra.check_total_cps")) {
       return this.statistics.getTotalConnectionsPerSecond();
     } else {
       return this.statistics.getConnectionsPerSecond();

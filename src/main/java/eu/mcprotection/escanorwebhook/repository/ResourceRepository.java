@@ -8,7 +8,6 @@ import java.util.Map;
 
 @Singleton
 public final class ResourceRepository {
-
   public static final String MAIN_CONFIG_PATH = "main-config";
 
   private Map<String, Configuration> configurations = new HashMap<>();

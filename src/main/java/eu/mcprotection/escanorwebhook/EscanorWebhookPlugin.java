@@ -13,22 +13,19 @@ import java.util.concurrent.ScheduledExecutorService;
 
 @Singleton
 public class EscanorWebhookPlugin extends Plugin {
-
   @Override
   public void onEnable() {
-    Injector injector =
-        Guice.createInjector(
-            new AbstractModule() {
-              @Override
-              protected void configure() {
-                bind(Plugin.class).toInstance(EscanorWebhookPlugin.this);
-                bind(EscanorProxyStatistics.class).toInstance(new EscanorProxyStatistics());
+    final Injector injector = Guice.createInjector(
+        new AbstractModule() {
+          @Override
+          protected void configure() {
+            bind(Plugin.class).toInstance(EscanorWebhookPlugin.this);
+            bind(EscanorProxyStatistics.class).toInstance(new EscanorProxyStatistics());
 
-                bind(ExecutorService.class).toInstance(Executors.newFixedThreadPool(3));
-                bind(ScheduledExecutorService.class)
-                    .toInstance(Executors.newScheduledThreadPool(2));
-              }
-            });
+            bind(ExecutorService.class).toInstance(Executors.newFixedThreadPool(3));
+            bind(ScheduledExecutorService.class).toInstance(Executors.newScheduledThreadPool(2));
+          }
+        });
 
     injector.getInstance(WebhookInitializer.class).initialize();
   }

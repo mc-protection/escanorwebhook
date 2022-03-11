@@ -10,7 +10,6 @@ import xyz.yooniks.escanorproxy.event.CheckFailedEvent;
 
 @Singleton
 public class CheckFailedListener implements Listener {
-
   @Inject private FailedWebhook failedWebhook;
   @Inject private EscanorProxyStatistics statistics;
 

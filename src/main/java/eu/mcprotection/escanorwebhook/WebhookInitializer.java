@@ -1,6 +1,7 @@
 package eu.mcprotection.escanorwebhook;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import eu.mcprotection.escanorwebhook.config.ResourceLoader;
 import eu.mcprotection.escanorwebhook.discord.AttackWebhook;
@@ -15,7 +16,7 @@ import net.md_5.bungee.config.Configuration;
 
 @Singleton
 public final class WebhookInitializer {
-
+  @Inject private Injector injector;
   @Inject private Plugin plugin;
   @Inject private ResourceLoader resourceLoader;
   @Inject private ResourceRepository resourceRepository;
@@ -50,13 +51,13 @@ public final class WebhookInitializer {
   }
 
   private void registerListener() {
-    PluginManager pluginManager = this.plugin.getProxy().getPluginManager();
+    final PluginManager pluginManager = this.plugin.getProxy().getPluginManager();
     if (this.getConfig().getBoolean("failed.enable")) {
-      pluginManager.registerListener(this.plugin, new CheckFailedListener());
+      pluginManager.registerListener(this.plugin, injector.getInstance(CheckFailedListener.class));
     }
 
     if (this.getConfig().getBoolean("exception.enable")) {
-      pluginManager.registerListener(this.plugin, new ProxyExceptionListener());
+      pluginManager.registerListener(this.plugin, injector.getInstance(ProxyExceptionListener.class));
     }
   }
 

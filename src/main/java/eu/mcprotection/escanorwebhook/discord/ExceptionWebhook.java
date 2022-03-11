@@ -17,7 +17,6 @@ public class ExceptionWebhook extends Webhook {
 
   @Inject private Plugin plugin;
   @Inject private ExecutorService service;
-  @Inject private ResourceRepository resourceRepository;
 
   @Inject
   private ExceptionWebhook(ResourceRepository resourceRepository) {
@@ -30,35 +29,34 @@ public class ExceptionWebhook extends Webhook {
   }
 
   public void send(@NotNull final String plugin, @NotNull final String stacktrace) {
-    this.service.submit(
-        () -> {
-          final WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
-          builder.setTitle(
-              new WebhookEmbed.EmbedTitle(
-                  this.config.getString("exception.embed.title"),
-                  this.config.getString("exception.embed.url")));
-          builder.setColor(this.config.getInt("exception.embed.color"));
-          builder.setDescription(
-              this.config
-                  .getString("exception.embed.description")
-                  .replace("{NL}", "\n")
-                  .replace("{0}", plugin)
-                  .replace(
-                      "{1}",
-                      stacktrace.length() > 4096 ? stacktrace.substring(0, 4096) : stacktrace));
-          if (this.config.getBoolean("exception.embed.timestamp")) {
-            builder.setTimestamp(Instant.ofEpochMilli(System.currentTimeMillis()));
-          }
-          builder.setFooter(
-              new WebhookEmbed.EmbedFooter(
-                  this.config.getString("exception.embed.footer.text"),
-                  this.config.getString("exception.embed.footer.icon_url")));
+    this.service.submit(() -> {
+      final WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
+      builder.setTitle(
+          new WebhookEmbed.EmbedTitle(
+              this.getConfig().getString("exception.embed.title"),
+              this.getConfig().getString("exception.embed.url")));
+      builder.setColor(this.getConfig().getInt("exception.embed.color"));
+      builder.setDescription(
+          this.getConfig()
+              .getString("exception.embed.description")
+              .replace("{NL}", "\n")
+              .replace("{0}", plugin)
+              .replace(
+                  "{1}",
+                  stacktrace.length() > 4096 ? stacktrace.substring(0, 4096) : stacktrace));
+      if (this.getConfig().getBoolean("exception.embed.timestamp")) {
+        builder.setTimestamp(Instant.ofEpochMilli(System.currentTimeMillis()));
+      }
+      builder.setFooter(
+          new WebhookEmbed.EmbedFooter(
+              this.getConfig().getString("exception.embed.footer.text"),
+              this.getConfig().getString("exception.embed.footer.icon_url")));
 
-          try {
-            this.client.send(builder.build());
-          } catch (HttpException exception) {
-            this.plugin.getLogger().warning("Failed to send webhook: " + exception.getMessage());
-          }
-        });
+      try {
+        this.client.send(builder.build());
+      } catch (HttpException exception) {
+        this.plugin.getLogger().warning("Failed to send webhook: " + exception.getMessage());
+      }
+    });
   }
 }

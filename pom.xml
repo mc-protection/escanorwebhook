@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>5.0.1</version>
+            <version>5.1.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -105,9 +105,10 @@
                             <relocations>
                                 <relocation>
                                     <pattern>club.minnced.discord.webhook</pattern>
-                                    <shadedPattern>eu.mcprotection.shade.webhook</shadedPattern>
+                                    <shadedPattern>eu.mcprotection.escanorwebhook.shade.webhook</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
