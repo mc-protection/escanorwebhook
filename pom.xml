@@ -10,7 +10,7 @@
 
   <repositories>
     <repository>
-      <id>Intelligence Repository-MCP</id>
+      <id>mcp</id>
       <name>Intelligence Repository</name>
       <url>https://mvn.intelligence-modding.de/MCP</url>
     </repository>
