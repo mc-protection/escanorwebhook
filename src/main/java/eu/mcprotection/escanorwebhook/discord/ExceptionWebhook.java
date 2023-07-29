@@ -28,6 +28,8 @@ public class ExceptionWebhook extends Webhook {
   }
 
   public void send(@NotNull final String plugin, @NotNull final String stacktrace) {
+    @NotNull String finalStacktrace =
+        stacktrace.length() > 4096 ? stacktrace.substring(0, 4096) : stacktrace;
     this.service.submit(() -> {
       final WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
       builder.setTitle(
@@ -40,9 +42,7 @@ public class ExceptionWebhook extends Webhook {
               .getString("exception.embed.description")
               .replace("{NL}", "\n")
               .replace("{0}", plugin)
-              .replace(
-                  "{1}",
-                  stacktrace.length() > 4096 ? stacktrace.substring(0, 4096) : stacktrace));
+              .replace("{1}", finalStacktrace));
       if (this.getConfig().getBoolean("exception.embed.timestamp")) {
         builder.setTimestamp(Instant.ofEpochMilli(System.currentTimeMillis()));
       }

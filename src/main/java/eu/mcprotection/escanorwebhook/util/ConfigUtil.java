@@ -1,8 +1,10 @@
 package eu.mcprotection.escanorwebhook.util;
 
+import lombok.experimental.UtilityClass;
 import net.md_5.bungee.config.Configuration;
 import org.jetbrains.annotations.NotNull;
 
+@UtilityClass
 public class ConfigUtil {
 
   public static boolean isShow(@NotNull final Configuration configuration,
